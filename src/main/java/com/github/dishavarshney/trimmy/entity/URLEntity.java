@@ -1,0 +1,96 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.github.dishavarshney.trimmy.entity;
+
+import com.github.dishavarshney.trimmy.utils.Utils;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
+import java.util.HashMap;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Version;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
+
+/**
+ *
+ * @author Disha Varshney
+ */
+@Entity
+@Table(name = "urls")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class URLEntity {
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    Long id;
+    @Size(max = 2147483647)
+    @Column(name = "url")
+    @URL
+    String url;
+    @Column(name = "urlhashcode")
+    Integer urlHashCode;
+    @Size(max = 2147483647)
+    @Column(name = "shortenurl")
+    String shortenurl;
+    @Size(max = 2147483647)
+    @Column(name = "active")
+    String active;
+    @Size(max = 2147483647)
+    @Column(name = "createdby")
+    String createdBy;
+    @Size(max = 2147483647)
+    @Column(name = "updatedby")
+    String updatedBy;
+    @Column(name = "createdat")
+    Timestamp createdAt;
+    @Column(name = "updatedat")
+    Timestamp updatedAt;
+    @Column(name = "expirationdate")
+    Date expirationDate;
+    @Version
+    private Integer version;
+
+    @PrePersist
+    private void prePersistFunction() {
+        active = "Y";
+        createdBy = Utils.getUserPrincipal();
+        createdAt = Timestamp.from(Instant.now());
+    }
+
+    @PreUpdate
+    public void preUpdateFunction() {
+        updatedBy = Utils.getUserPrincipal();
+        updatedAt = Timestamp.from(Instant.now());
+    }
+
+    public HashMap getReturn(HttpServletRequest request) {
+        HashMap lHashMap = new HashMap();
+        lHashMap.put("url", url);
+        lHashMap.put("shorentUrl", Utils.getShortUrl(request, shortenurl));
+        lHashMap.put("user", createdBy);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String formattedDate = dateFormat.format(expirationDate);
+        lHashMap.put("expiry", formattedDate);
+        return lHashMap;
+    }
+}
