@@ -50,7 +50,7 @@ public class RestAPIController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity encode(HttpServletRequest request) {
+    public ResponseEntity listAll(HttpServletRequest request) {
         List<HashMap> lReturn = new ArrayList<>();
         List<URLEntity> URLEntityList = lService.ListURLEntity();
         if (URLEntityList.isEmpty()) {

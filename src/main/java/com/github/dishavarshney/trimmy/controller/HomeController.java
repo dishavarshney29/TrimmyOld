@@ -53,7 +53,7 @@ public class HomeController {
     }
 
     @PostMapping("/url/delete/{id}")
-    public String deleteURL(@PathVariable Integer id) {
+    public String deleteURL(@PathVariable String id) {
         uRLService.deleteURLEntity(id);
         return "redirect:/app/home/url/" + id;
     }

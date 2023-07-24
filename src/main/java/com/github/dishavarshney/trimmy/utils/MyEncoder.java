@@ -20,19 +20,20 @@ public final class MyEncoder {
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
         'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
     private static final int ENCODE_MAX_VALUE = ENCODE_TABLE.length * ENCODE_TABLE.length;
     private static final int ENCODE_MAX_VALUE_LENGTH = ("" + ENCODE_MAX_VALUE).length();
     private static final int ENCODE_TABLE_LENGTH = ENCODE_TABLE.length;
 
-    public String encode(long hashcode, int userId, boolean addRandom) {
+    public String encode(long hashcode, boolean addRandom) {
         int nextInt = 0;
         if (addRandom) {
             Random random = new Random();
             nextInt = random.nextInt(1000);
         }
-        String strHashcode = "" + Math.abs(hashcode + userId + nextInt);
+        String strHashcode = "" + Math.abs(hashcode + nextInt);
         return encode(strHashcode);
     }
 

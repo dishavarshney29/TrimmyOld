@@ -6,16 +6,17 @@
 package com.github.dishavarshney.trimmy.repositories;
 
 import com.github.dishavarshney.trimmy.entity.Users;
-import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 /**
  *
  * @author Disha Varshney
  */
 @Repository
-public interface UserRepository extends JpaRepository<Users, Long> {
+public interface UserRepository extends MongoRepository<Users, String> {
 
     public Optional<Users> findByUsername(String username);
 

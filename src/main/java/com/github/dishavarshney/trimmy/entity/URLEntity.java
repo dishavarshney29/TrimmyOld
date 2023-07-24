@@ -6,79 +6,80 @@
 package com.github.dishavarshney.trimmy.entity;
 
 import com.github.dishavarshney.trimmy.utils.Utils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import javax.persistence.Id;
+import javax.persistence.Version;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Version;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.URL;
 
 /**
- *
  * @author Disha Varshney
  */
-@Entity
-@Table(name = "urls")
-@Data
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class URLEntity {
+@Document(collection = "urls")
+public class URLEntity implements PrePersistListener, PreUpdateListener {
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
-    Long id;
+    private String id;
+
     @Size(max = 2147483647)
-    @Column(name = "url")
-    @URL
-    String url;
-    @Column(name = "urlhashcode")
-    Integer urlHashCode;
+    @Field(name = "url")
+    private String url;
+
+    @Field(name = "urlhashcode")
+    private Integer urlHashCode;
+
     @Size(max = 2147483647)
-    @Column(name = "shortenurl")
-    String shortenurl;
+    @Field(name = "shortenurl")
+    private String shortenurl;
+
     @Size(max = 2147483647)
-    @Column(name = "active")
-    String active;
+    @Field(name = "active")
+    private String active;
+
     @Size(max = 2147483647)
-    @Column(name = "createdby")
-    String createdBy;
+    @Field(name = "createdby")
+    private String createdBy;
+
     @Size(max = 2147483647)
-    @Column(name = "updatedby")
-    String updatedBy;
-    @Column(name = "createdat")
-    Timestamp createdAt;
-    @Column(name = "updatedat")
-    Timestamp updatedAt;
-    @Column(name = "expirationdate")
-    Date expirationDate;
+    @Field(name = "updatedby")
+    private String updatedBy;
+
+    @Field(name = "createdat")
+    private Date createdAt;
+
+    @Field(name = "updatedat")
+    private Date updatedAt;
+
+    @Field(name = "expirationdate")
+    private Date expirationDate;
+
     @Version
     private Integer version;
 
-    @PrePersist
-    private void prePersistFunction() {
+    @Override
+    public void onPrePersist() {
         active = "Y";
         createdBy = Utils.getUserPrincipal();
         createdAt = Timestamp.from(Instant.now());
     }
 
-    @PreUpdate
-    public void preUpdateFunction() {
+    @Override
+    public void onPreUpdate() {
         updatedBy = Utils.getUserPrincipal();
         updatedAt = Timestamp.from(Instant.now());
     }

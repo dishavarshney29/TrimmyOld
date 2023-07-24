@@ -2,88 +2,62 @@ package com.github.dishavarshney.trimmy.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.dishavarshney.trimmy.utils.Utils;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Version;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Entity
-@Table(name = "users")
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Document(collection = "users")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Users implements UserDetails {
+public class Users implements UserDetails, PrePersistListener, PreUpdateListener{
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
-    Long id;
+    private String id;
 
-    @NotEmpty
-    @Email
-    @Column(name = "username")
+    @Indexed(unique = true)
     private String username;
 
-    @NotEmpty
-    @Column(name = "password")
     private String password;
 
-    @NotEmpty
-    @Column(name = "token")
     private String token;
 
-    @Size(max = 2147483647)
-    @Column(name = "active")
-    String active;
+    private String active;
 
-    @Size(max = 2147483647)
-    @Column(name = "createdby")
-    String createdBy;
+    private String createdBy;
 
-    @Size(max = 2147483647)
-    @Column(name = "updatedby")
-    String updatedBy;
+    private String updatedBy;
 
-    @Column(name = "createdat")
-    Timestamp createdAt;
+    private Date createdAt;
 
-    @Column(name = "updatedat")
-    Timestamp updatedAt;
+    private Date updatedAt;
 
     @Version
-    private Integer version;
+    private Long version;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
     private List<String> roles = new ArrayList<>();
 
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream().map(SimpleGrantedAuthority::new).collect(toList());
+        return this.roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override
@@ -116,17 +90,16 @@ public class Users implements UserDetails {
         return true;
     }
 
-    @PrePersist
-    public void prePersistFunction() {
+    @Override
+    public void onPrePersist() {
         active = "Y";
         createdBy = Utils.getUserPrincipal();
         createdAt = Timestamp.from(Instant.now());
     }
 
-    @PreUpdate
-    public void preUpdateFunction() {
+    @Override
+    public void onPreUpdate() {
         updatedBy = Utils.getUserPrincipal();
         updatedAt = Timestamp.from(Instant.now());
     }
-
 }

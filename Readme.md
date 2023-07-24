@@ -46,3 +46,13 @@ Go to the below URL in Browser
 http://localhost:8081
 ```
 
+#### Build and run docker image in your local
+
+Build via Dockerfile using your image name
+```
+docker build -t trimmy-test:latest .
+```
+Map container port 8080 by listening to port 8081 from your host
+```
+docker run -p 8080:8081 trimmy-test:latest
+```

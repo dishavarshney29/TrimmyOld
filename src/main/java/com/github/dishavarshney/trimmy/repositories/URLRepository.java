@@ -6,19 +6,18 @@
 package com.github.dishavarshney.trimmy.repositories;
 
 import com.github.dishavarshney.trimmy.entity.URLEntity;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 /**
- *
  * @author Disha Varshney
  */
 @Repository
-public interface URLRepository extends JpaRepository<URLEntity, Long> {
+public interface URLRepository extends MongoRepository<URLEntity, String> {
 
     public List<URLEntity> findByUrlHashCodeAndCreatedBy(Integer hashcode, String createdBy);
 

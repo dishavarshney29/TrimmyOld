@@ -62,7 +62,7 @@ public class URLService {
                 }
             }
         }
-        entity.setShortenurl(encoder.encode(encodingHashCode, lUser.getId().intValue(), addRandom));
+        entity.setShortenurl(encoder.encode(encodingHashCode, addRandom));
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, EXPIRATION_IN_DAYS);
         entity.setExpirationDate(calendar.getTime());
@@ -71,7 +71,7 @@ public class URLService {
         return true;
     }
 
-    public void deleteExpiredURLs() {
+    private void deleteExpiredURLs() {
         Date currentDate = new Date();
         List<URLEntity> expiredURLs = uRLRepository.findByExpirationDateBefore(currentDate);
         uRLRepository.deleteAll(expiredURLs);
@@ -82,8 +82,8 @@ public class URLService {
         scheduler.scheduleAtFixedRate(this::deleteExpiredURLs, 0, NEXT_SCHEDULE_TIME_IN_HOURS * 60 * 60, TimeUnit.SECONDS);
     }
 
-    public boolean deleteURLEntity(Integer id) {
-        uRLRepository.deleteById(id.longValue());
+    public boolean deleteURLEntity(String id) {
+        uRLRepository.deleteById(id);
         return true;
     }
 
@@ -95,5 +95,4 @@ public class URLService {
         List<URLEntity> lURL = uRLRepository.findByCreatedBy(Utils.getUserPrincipal());
         return lURL;
     }
-
 }

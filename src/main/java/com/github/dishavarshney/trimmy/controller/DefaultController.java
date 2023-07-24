@@ -37,13 +37,12 @@ public class DefaultController {
     public String home() {
         return "redirect:/swagger-ui.html";
     }
-//
 
-    @GetMapping("r/{url}")
-    public String redirect(@PathVariable String url) {
+    @GetMapping("r/{shortUrl}")
+    public String redirect(@PathVariable String shortUrl) {
         String lReturn = "redirect:/app/home";
-        if (!ObjectUtils.isEmpty(url)) {
-            Optional<URLEntity> urlEntity = uRLService.getURLEntity(url);
+        if (!ObjectUtils.isEmpty(shortUrl)) {
+            Optional<URLEntity> urlEntity = uRLService.getURLEntity(shortUrl);
             if (urlEntity.isPresent()) {
                 lReturn = "redirect:" + urlEntity.get().getUrl();
             }
