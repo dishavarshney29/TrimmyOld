@@ -1,4 +1,4 @@
-# ![](images/logo_128.png)**Trimmy - URL Shorten API**
+# ![](images/logo_128.png) **Trimmy - URL Shorten API**
 
 Trimmy is a URL Shortening API, which works on the following Authentication mechanisms
 
